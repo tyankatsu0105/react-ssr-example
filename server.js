@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDomServer from "react-dom/server";
-
+import qs from "qs";
 import express from "express";
 import browserify from "browserify";
 import babelify from "babelify";
@@ -44,7 +44,15 @@ app.get("/bundle.js", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  const store = createStore(reducer);
+  const params = qs.parse(req.query);
+  const count = parseInt(params.count, 10) || 0;
+
+  /**
+   * http://localhost:3000/?count=100
+   */
+  const preloadedState = { count };
+
+  const store = createStore(reducer, preloadedState);
 
   const component = (
     <Provider store={store}>
@@ -57,9 +65,9 @@ app.get("/", (req, res) => {
    */
   const content = ReactDomServer.renderToString(component);
 
-  const preloadedState = store.getState();
+  const finalState = store.getState();
 
-  res.send(renderFullPage(content, preloadedState));
+  res.send(renderFullPage(content, finalState));
   console.info("rendered at server side");
 });
 
