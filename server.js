@@ -49,6 +49,7 @@ app.get("/", (req, res) => {
 
   /**
    * http://localhost:3000/?count=100
+   * window.__PRELOADED_STATE__でpreloadedStateをclientに渡さないと、hydrateしたときにstoreが初期化されて、server sideでstateが変更された値がクライアントに引き継げない
    */
   const preloadedState = { count };
 
